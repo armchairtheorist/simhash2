@@ -4,8 +4,3 @@
 [![Coverage Status](https://coveralls.io/repos/github/armchairtheorist/simhash/badge.svg?branch=master)](https://coveralls.io/github/armchairtheorist/simhash?branch=master)
 
 # Simhash
-
-
-
-## License
-**Simhash** is released under the [MIT license](MIT-LICENSE).
