@@ -1,0 +1,6 @@
+AllCops:
+  Exclude:
+    - 'spec/spec_helper.rb'
+
+Metrics/LineLength:
+  Enabled: false
