@@ -1,24 +1,24 @@
+require 'simhash/version'
+
 module Simhash
   extend self
 
-  autoload :Version, 'simhash/version'
-  autoload :Stopwords, 'simhash/stopwords'
-
   HASHBITS = 64
 
-  DEFAULT_OPTIONS = {
-    :unique => true,
+  OPTIONS = {
     :min_token_length => 1,
-    :stop_words => false,
-    :stemming => false
+    :unique => false,
+    :stemming => false,
+    :stop_words => []
+
   }.freeze
 
   def generate (str, options = {})
-    generate_from_tokens(str.split(' '), options)
+    generate_from_tokens(str.split(/\s+/), options)
   end
 
   def generate_from_tokens (tokens, options = {})
-    filter_tokens(tokens, DEFAULT_OPTIONS.merge(options))
+    filter_tokens(tokens, OPTIONS.merge(options))
 
     v = [0] * HASHBITS
 
@@ -59,64 +59,10 @@ module Simhash
   end
 
   def filter_tokens (tokens, options)
+    tokens.map! { |e| e.downcase.gsub(/\W+/, '') }
     tokens.reject! { |e| e.nil? || e.length < options[:min_token_length] }
-    tokens.map! { |e| e.downcase }
-    tokens.reject!{ |e| STOPWORDS.include?(e) } if options[:stop_words]
+    tokens.reject!{ |e| options[:stop_words].include?(e) } unless options[:stop_words].nil? || options[:stop_words].empty?
     tokens.map!{ |e| e.stem } if options[:stemming]
     tokens.uniq! if options[:unique]
   end
 end
-
-
-
-# require 'fast-stemmer'
-
-# def tokenize (str)
-#   str.split(' ')
-# end
-
-# require 'simhash'
-
-# str1 = "applebear hello".downcase
-# str2 = "applebear applebear applebear hello".downcase
-# old1 = str1.simhash
-# old2 = str2.simhash
-# new1 = Simhash.generate(str1)
-# new2 = Simhash.generate(str2)
-# puts str1
-# puts str2
-# puts "[#{old1.to_s(2).rjust(64)}] : [#{old2.to_s(2).rjust(64)}] : #{Simhash.hamming_distance(old1, old2)}"
-# puts "[#{new1.to_s(2).rjust(64)}] : [#{new2.to_s(2).rjust(64)}] : #{Simhash.hamming_distance(new1, new2)}"
-# puts
-
-# str1 = "GOSICK ARTIST HINATA TAKEDA PASSES AWAY DUE TO AN ILLNESS".downcase
-# str2 = "ILLUSTRATOR HINATA TAKEDA OF GOSICK FAME HAS PASSED AWAY".downcase
-# old1 = str1.simhash
-# old2 = str2.simhash
-# new1 = Simhash.generate(tokenize(str1))
-# new2 = Simhash.generate(tokenize(str2))
-# puts str1
-# puts str2
-# puts "[#{old1.to_s(2).rjust(64)}] : [#{old2.to_s(2).rjust(64)}] : #{Simhash.hamming_distance(old1, old2)}"
-# puts "[#{new1.to_s(2).rjust(64)}] : [#{new2.to_s(2).rjust(64)}] : #{Simhash.hamming_distance(new1, new2)}"
-# puts
-
-# str1 = "DYNASTY WARRIORS 9 IS A PS4 TITLE ADDS CENG PU".downcase
-# str2 = "I like strawberry shortcake".downcase
-# old1 = str1.simhash
-# old2 = str2.simhash
-# new1 = Simhash.generate(tokenize(str1))
-# new2 = Simhash.generate(tokenize(str2))
-# puts str1
-# puts str2
-# puts "[#{old1.to_s(2).rjust(64)}] : [#{old2.to_s(2).rjust(64)}] : #{Simhash.hamming_distance(old1, old2)}"
-# puts "[#{new1.to_s(2).rjust(64)}] : [#{new2.to_s(2).rjust(64)}] : #{Simhash.hamming_distance(new1, new2)}"
-# puts
-
-# require 'benchmark'
-
-# n = 10000
-# Benchmark.bm do |x|
-#   x.report { n.times do; str1.simhash; end }
-#   x.report { n.times do; Simhash.generate(tokenize(str1)); end }
-# end
