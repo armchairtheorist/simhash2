@@ -1,122 +1,26 @@
 require 'spec_helper'
 
 describe Simhash do
-  it 'should support three normal pipes' do
-    pipeline = SimplePipeline.new
-    pipeline.add TestPipe1.new
-    pipeline.add TestPipe1.new
-    pipeline.add TestPipe1.new
+  it 'should generate the same simhash for the same string, and a different simhash for a different string' do
+    str1 = "I like going to the beach"
+    str2 = "I like going to the beach"
+    str3 = "I like going to the mall"
 
-    payload = { test_value: 10 }
-
-    pipeline.process(payload)
-
-    expect(pipeline.size).to eq 3
-    expect(payload[:test_value]).to eq 10_000
+    expect(Simhash.generate(str1)).to eq Simhash.generate(str2)
+    expect(Simhash.generate(str1)).not_to eq Simhash.generate(str3)
   end
 
-  it 'should throw an error for invalid pipes' do
-    pipeline = SimplePipeline.new
+  it 'should respect the :unique option' do
+    str1 = "apple pear"
+    str2 = "apple apple apple pear"
 
-    expect do
-      pipeline.add Object.new # not a pipe
-    end.to raise_error(ArgumentError)
-
-    expect do
-      pipeline.add TestPipe2.new
-    end.to raise_error(ArgumentError)
+    expect(Simhash.generate(str1, unique: true)).to eq Simhash.generate(str2, unique: true)
+    expect(Simhash.generate(str1, unique: false)).not_to eq Simhash.generate(str2, unique: false)
   end
 
-  it 'should support pipes with timeout values' do
-    pipeline = SimplePipeline.new
-    pipe = TimeoutPipe1.new
-    pipeline.add pipe
-
-    expect(pipe.timeout).to eq 3
-    pipe.timeout = 1
-    expect(pipe.timeout).to eq 1
-
-    expect do
-      pipeline.process({})
-    end.to raise_error(Timeout::Error)
-
-    pipeline = SimplePipeline.new
-    pipeline.add TimeoutPipe2.new, timeout: 1
-
-    expect do
-      pipeline.process({})
-    end.to raise_error(Timeout::Error)
-  end
-
-  it 'should support pipes with :continue_on_error' do
-    pipeline = SimplePipeline.new
-    pipeline.add TestPipe1.new
-    pipeline.add ExceptionPipe.new
-    pipeline.add TestPipe1.new
-
-    payload = { test_value: 10 }
-
-    expect do
-      pipeline.process(payload)
-    end.to raise_error(ArgumentError)
-
-    expect(payload[:test_value]).to eq 100
-    expect(pipeline.errors.size).to eq 0
-
-    pipeline = SimplePipeline.new
-    pipeline.add TestPipe1.new
-    pipeline.add ExceptionPipe.new, continue_on_error?: true
-    pipeline.add ExceptionPipe.new, continue_on_error?: ArgumentError
-    pipeline.add ExceptionPipe.new, continue_on_error?: StandardError
-    pipeline.add ExceptionPipe.new, continue_on_error?: [ArgumentError]
-    pipeline.add ExceptionPipe.new, continue_on_error?: [RuntimeError, StandardError]
-    pipeline.add TestPipe1.new
-
-    payload = { test_value: 10 }
-
-    pipeline.process(payload)
-
-    expect(payload[:test_value]).to eq 1000
-    expect(pipeline.errors.size).to eq 5
-  end
-
-  it 'should support pipes with :process_method' do
-    pipeline = SimplePipeline.new
-    pipeline.add TestPipe2.new, process_method: :alternate_process_method
-
-    expect do
-      pipeline.add TestPipe1.new, process_method: :this_method_doesnt_exist
-    end.to raise_error(ArgumentError)
-
-    payload = { test_value: 10 }
-
-    pipeline.process(payload)
-
-    expect(payload[:test_value]).to eq 100
-  end
-
-  it 'should support pipes with payload validation' do
-    pipeline = SimplePipeline.new
-    pipeline.add ValidationPipe.new
-
-    payload = {
-      test_value: 10,
-      must_exist: 'it does'
-    }
-
-    expect do
-      pipeline.process(payload)
-    end.to raise_error(SimplePipeline::Validation::Error)
-
-    payload = {
-      test_value: 10,
-      must_exist: 'it does',
-      must_be_false: false,
-      a: { b: 1 }
-    }
-
-    pipeline.process(payload)
-
-    expect(payload[:test_value]).to eq 100
+  it 'should calculate hamming distances correctly' do
+    expect(Simhash.hamming_distance(2, 2)).to eq 0
+    expect(Simhash.hamming_distance(2, 3)).to eq 1
+    expect(Simhash.hamming_distance(255, 197)).to eq 4
   end
 end
