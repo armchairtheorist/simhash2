@@ -29,9 +29,9 @@ I have only tested this gem on Ruby 2.4.1, but there shouldn't be any reason why
 str1 = "I am the king of the world!"
 str2 = "I am the queen of the world!"
 
-simhash1 = Simhash.generate(str1) # =>
-simhash2 = Simhash.generate(str2) # =>
+simhash1 = Simhash.generate(str1) # => 86798109229625320
+simhash2 = Simhash.generate(str2) # => 13921220612431195624
 
-Simhash.hamming_distance(simhash1, simhash2) # =>
+Simhash.hamming_distance(simhash1, simhash2) # => 8
 ```
 
