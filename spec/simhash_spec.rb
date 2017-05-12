@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'simhash2'
 require 'fast-stemmer'
 
 describe Simhash do

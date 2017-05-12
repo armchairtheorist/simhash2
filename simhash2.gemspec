@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Jonathan Wong']
   spec.email         = ['jonathan@armchairtheorist.com']
   spec.summary       = 'A rewrite of the \'simhash\' gem, which is an implementation of Moses Charikar\'s simhashes in Ruby.'
-  spec.homepage      = 'http://github.com/armchairtheorist/simhash'
+  spec.homepage      = 'https://github.com/armchairtheorist/simhash2'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split("\n")
