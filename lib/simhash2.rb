@@ -1,4 +1,4 @@
-require 'simhash/version'
+require 'simhash2/version'
 
 module Simhash
   extend self

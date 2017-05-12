@@ -1,4 +1,4 @@
-require File.expand_path('../lib/simhash/version', __FILE__)
+require File.expand_path('../lib/simhash2/version', __FILE__)
 
 Gem::Specification.new do |spec|
   spec.name          = 'simhash2'
