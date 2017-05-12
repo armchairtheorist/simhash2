@@ -4,3 +4,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/armchairtheorist/simhash/badge.svg?branch=master)](https://coveralls.io/github/armchairtheorist/simhash?branch=master)
 
 # Simhash
+
+This is a rewrite of the [bookmate/simhash](https://github.com/bookmate/simhash) gem, which is an implementation of Moses Charikar's simhashes in Ruby.
