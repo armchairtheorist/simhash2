@@ -1,7 +1,7 @@
 [![Gem Version](https://badge.fury.io/rb/simhash2.svg)](https://badge.fury.io/rb/simhash2)
-[![Code Climate](https://codeclimate.com/github/armchairtheorist/simhash/badges/gpa.svg)](https://codeclimate.com/github/armchairtheorist/simhash)
-[![Build Status](https://travis-ci.org/armchairtheorist/simhash.svg?branch=master)](https://travis-ci.org/armchairtheorist/simhash)
-[![Coverage Status](https://coveralls.io/repos/github/armchairtheorist/simhash/badge.svg?branch=master)](https://coveralls.io/github/armchairtheorist/simhash?branch=master)
+[![Code Climate](https://codeclimate.com/github/armchairtheorist/simhash2/badges/gpa.svg)](https://codeclimate.com/github/armchairtheorist/simhash2)
+[![Build Status](https://travis-ci.org/armchairtheorist/simhash2.svg?branch=master)](https://travis-ci.org/armchairtheorist/simhash2)
+[![Coverage Status](https://coveralls.io/repos/github/armchairtheorist/simhash2/badge.svg?branch=master)](https://coveralls.io/github/armchairtheorist/simhash2?branch=master)
 
 # Simhash2
 
