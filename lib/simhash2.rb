@@ -45,6 +45,10 @@ module Simhash
     (simhash1.to_i ^ simhash2.to_i).to_s(2).count('1')
   end
 
+  def hash_similarity(left, right)
+    return (1.0 - (hamming_distance(left, right).to_f / HASHBITS))
+  end
+
   private
 
   def simple_string_hash(str, length)
@@ -69,7 +73,4 @@ module Simhash
     tokens.uniq! if options[:unique]
   end
 
-  def hash_similarity(left, right)
-    return (1.0 - (hamming_distance(left, right).to_f / HASHBITS))
-  end
 end
