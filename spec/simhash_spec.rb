@@ -11,6 +11,15 @@ describe Simhash do
     expect(Simhash.generate(str1)).not_to eq Simhash.generate(str3)
   end
 
+  it 'should calculate the same similarity for the same string, and a lower similarity for a different string' do
+    str1 = 'I like going to the beach'
+    str2 = 'I like going to the beach'
+    str3 = 'I like going to the mall'
+
+    expect(Simhash.similarity(str1, str2)).to eq 1.0
+    expect(Simhash.similarity(str1, str3)).to be < 1.0
+  end
+
   it 'should strip punctuation and capitalization properly' do
     str1 = "Hello, nurse!  How's it going today...   my man?"
     str2 = 'hello nurse hows it going today my man'
