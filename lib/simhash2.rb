@@ -10,8 +10,11 @@ module Simhash
     unique: false,
     stemming: false,
     stop_words: []
-
   }.freeze
+
+  def similarity(string1, string2, options = {})
+    return hash_similarity(generate(string1, options), generate(string2, options))
+  end
 
   def generate(str, options = {})
     generate_from_tokens(str.split(/\s+/), options)
@@ -42,6 +45,10 @@ module Simhash
     (simhash1.to_i ^ simhash2.to_i).to_s(2).count('1')
   end
 
+  def hash_similarity(left, right)
+    return (1.0 - (hamming_distance(left, right).to_f / HASHBITS))
+  end
+
   private
 
   def simple_string_hash(str, length)
@@ -65,4 +72,5 @@ module Simhash
     tokens.map!(&:stem) if options[:stemming]
     tokens.uniq! if options[:unique]
   end
+
 end
