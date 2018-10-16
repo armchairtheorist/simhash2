@@ -87,6 +87,7 @@ module Simhash
     else
       tokens.clear
       altered_tokens.each {|e| tokens << e }
+      tokens
     end
   end
 end
