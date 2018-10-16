@@ -1,4 +1,4 @@
-require 'simhash2/version'
+require_relative 'simhash2/version'
 
 module Simhash
   extend self
@@ -17,19 +17,20 @@ module Simhash
   end
 
   def generate(str, options = {})
+    # the split is how we get our tokens (or shingles)
+    # adjust that, if we want to use shingles
     generate_from_tokens(str.split(/\s+/), options)
   end
 
   def generate_from_tokens(tokens, options = {})
-    filter_tokens(tokens, OPTIONS.merge(options))
-
     v = [0] * HASHBITS
-
     masks = v.dup
     masks.each_with_index { |_e, i| masks[i] = (1 << i) }
 
-    hashes = tokens.map { |token| simple_string_hash(token, HASHBITS) }
-    hashes.each do |h|
+    filter_tokens(tokens, OPTIONS.merge(options)) do |token|
+      h = simple_string_hash(token, HASHBITS)
+      #warn "simple_string_hash (for: #{token.inspect}): #{h.inspect}"
+
       HASHBITS.times do |i|
         v[i] += (h & masks[i]).zero? ? -1 : +1
       end
@@ -65,12 +66,28 @@ module Simhash
     x.to_i
   end
 
-  def filter_tokens(tokens, options)
-    tokens.map! { |e| e.downcase.gsub(/\W+/, '') }
-    tokens.reject! { |e| e.nil? || e.length < options[:min_token_length] }
-    tokens.reject! { |e| options[:stop_words].include?(e) } unless options[:stop_words].nil? || options[:stop_words].empty?
-    tokens.map!(&:stem) if options[:stemming]
-    tokens.uniq! if options[:unique]
-  end
+  def filter_tokens(tokens, options, &block)
+    altered_tokens = []
+    tokens.each do |e|
+      new_e = e.downcase.gsub(/\W+/, '')
+      next if new_e.nil? || new_e.length < options[:min_token_length]
+      if options[:stop_words] && !options[:stop_words].empty?
+        next if options[:stop_words].include?(new_e)
+      end
+      if options[:stemming]
+        altered_tokens << new_e.stem
+      else
+        altered_tokens << new_e
+      end
+    end
+    altered_tokens.uniq! if options[:unique]
 
+    if block_given?
+      altered_tokens.each {|e| block[e] }
+    else
+      tokens.clear
+      altered_tokens.each {|e| tokens << e }
+      tokens
+    end
+  end
 end
